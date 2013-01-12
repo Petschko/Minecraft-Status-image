@@ -1,5 +1,7 @@
 <?php
 
+error_reporting( E_ERROR | E_PARSE );
+
 /* Created by Petschko
 *
 * Autors E-Mail: peter-91@hotmail.de
@@ -35,7 +37,7 @@ Header( "Content-Type: image/png" );
 $breite = 230;
 $height = 85;
 if( ! $show_who_create_script )
-	$height = 68;
+	$height = 70;
 
 $bild = imagecreatetruecolor( $breite, $height );
 
@@ -61,9 +63,10 @@ $textgroesse = 2;
 $x = 20;
 $text_1 = "Adress:";
 $text_2 = "State:";
+$ping_text = "";
 $text_uhrzeit = "Checked at:";
 $text_spieleronline = "Player:";
-$uhrzeit = date( "G:i", time( "now" ) ) . " on " . date( "d.m.Y", time( "now" ) );
+$uhrzeit = date( "G:i", time( "now" ) ) . " " . date( "d.m.Y", time( "now" ) );
 
 // Länge vom Text nach den 1 Texten ermitteln
 if( strlen( $text_1 ) > strlen( $text_2 ) )
@@ -74,6 +77,9 @@ else
 $x2 = $x + $text_laenge + 2;
 
 $x_zeit = $x + ( imagefontwidth( $textgroesse ) * ( strlen( $text_uhrzeit ) + 1 ) );
+$x_ping = 0;
+
+$color_ping = $weis;
 
 // Serveradresse zusammenbasteln
 $text_serverconnectioninfo = $serveradress;
@@ -120,10 +126,12 @@ if( @function_exists('fsockopen') )
 		
 		// Prüfen ob der Server antwortet	
 		$startzeit = microtime( );
+		
 		$data = @fsockopen( $serveradress, $port, $errno, $errstr, $timeout );
+		
 		$endzeit = microtime( );
 		
-		if( $data == true )
+		if( $data )
 		{
 			// Daten aus den Server auslesen
 			try
@@ -138,7 +146,7 @@ if( @function_exists('fsockopen') )
 				$temp = mb_convert_encoding( $temp, 'auto', 'UCS-2' );
 				$temp = explode( "\xA7", $temp );
 				// Verbindung schließen
-				fclose( $data );
+				@fclose( $data );
 				
 				$serverinfo = array( 'motd' => $temp[0], 'spieler' => ( int )$temp[1], 'max_spieler' => ( int )$temp[2] );
 			}
