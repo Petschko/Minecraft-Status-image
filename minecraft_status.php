@@ -1,14 +1,5 @@
 <?php
 
-$serveradress = "my.mcserver.net";	// Minecraftserveradress | Example: mc.eona.in
-$port = 25565;						// Minecraftserver Port | Default: 25565
-$timeout = 1;						// Timeout to check if it is online | Max-Value: 10 Min-Value: 1
-$allow_check = true;				// Enable/Disable check | true = enabled, false = disabled
-
-header( "Pragma: no-cache" ); 
-header( "Cache-Control: no-store, no-cache, max-age=0, must-revalidate" );
-Header( "Content-Type: image/png" );
-
 /* Created by Petschko
 *
 * Autors E-Mail: peter-91@hotmail.de
@@ -33,10 +24,20 @@ function CenterImageString( $image, $image_width, $string, $font_size, $y, $colo
 	ImageString( $image, $font_size, $x, $y, $string, $color );
 }
 
+require( "config.php" );
+
+header( "Pragma: no-cache" ); 
+header( "Cache-Control: no-store, no-cache, max-age=0, must-revalidate" );
+Header( "Content-Type: image/png" );
+
 
 // Init image (width, height)
 $breite = 230;
-$bild = imagecreatetruecolor( $breite, 85 );
+$height = 85;
+if( ! $show_who_create_script )
+	$height = 68;
+
+$bild = imagecreatetruecolor( $breite, $height );
 
 // Transparenten hintergrund erstellen (deaktiviert)
 /*imagesavealpha( $bild, true );
@@ -231,7 +232,7 @@ else
 	*  Wenn da Unbekannt steht, hat dein Serverhoster die fsockopen() Funktion höchstwahrscheinlich deaktiviert oder benutzt eine veraltete PHP-Version. Kontaktiere hierzu am besten deinen Webhoster
 	*  Wenn du der Besitzer des Webservers bist musst du die Funktion in der php.ini aktivieren/erlauben oder deine PHP-Version Updaten! Hilfe findest du hier: http://de2.php.net/manual/de/ini.php
 	*/
-	$status_text = "Unbekannt";
+	$status_text = "Unknow (See help)";
 	$color_status = $grau;
 }
 
@@ -257,7 +258,8 @@ ImageString( $bild, $textgroesse, $x4, 44, $text_maxspieler, $color_max_player )
 ImageString( $bild, $textgroesse, $x, 56, $text_uhrzeit, $weis );
 ImageString( $bild, $textgroesse, $x_zeit, 56, $uhrzeit, $color_con_info );
 
-//CenterImageString( $bild, $breite, "PHP-Script created by Petschko", $textgroesse, 68, $grau );
+if( $show_who_create_script )
+	CenterImageString( $bild, $breite, "PHP-Script created by Petschko", $textgroesse, 68, $grau );
 
 // --------------- Ende der Textarea
 
