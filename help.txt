@@ -4,8 +4,9 @@ I hope you can understand what i mean here, I'am not the best who write good in 
 ### How to config ###
 #####################
 
-open the config.php and set there your server IP/hostname (ipv6 needs [] around the IP)
-save it and youre done.
+1. upload the config.php and minecraft_status.php to your website (via FTP or what ever)
+2. open the config.php and set there your server IP/hostname (ipv6 needs [] around the IP)
+3. save it and you're done.
 
 
 #############################################
@@ -14,6 +15,12 @@ save it and youre done.
 
 Include the image like a normal png/jpg/jpeg/gif image: (HTML-Code)
 <img src="minecraft_status.php" alt="Minecraftserverstate" title="My Serverstate" />
+or (recommend)
+<img src="http://yoursite.net/imagepath/minecraft_status.php" alt="Minecraftserverstate" title="My Serverstate" />
+
+You can use this also in your forums signature, use the image BB-code like that:
+[img]http://yoursite.net/imagepath/minecraft_status.php[/img]
+
 
 -----------------------------------------------
 -------------Error area------------------------
@@ -26,15 +33,15 @@ Include the image like a normal png/jpg/jpeg/gif image: (HTML-Code)
 check your config and make sure, that you use the correct port of your minecraftserver, when you use the default port you must set it to 25565!
 
 
-#############################################################
-### You get the text "Host din't exist! (Your IP-Adress)" ###
-#############################################################
+##############################################################
+### You get the text "Host didn't exist! (Your IP-Adress)" ###
+##############################################################
 open your config and set $use_ip = true; also set this to true, when you use ipv6!
 
 
-############################################################
-### You get the text "Host din't exist! (Your Hostname)" ###
-############################################################
+#############################################################
+### You get the text "Host didn't exist! (Your Hostname)" ###
+#############################################################
 
 You use an invalid hostname please check this out in your config or set $use_ip = true; to disable the hostcheck (not recommend)!
 
@@ -59,5 +66,5 @@ Open your config.php and set your server IP/hostname and the correct port and se
 ### You get NONE image ###
 ##########################
 
-You use an not existing hostname. Check you hostname in you config (write it without http://)
+You use an not existing hostname. Check you hostname in your config-file (write it without http://)
 Or you found a bug please report it! -> https://github.com/Petschko/Minecraft-Status-image/issues/new
