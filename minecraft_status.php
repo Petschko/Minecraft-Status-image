@@ -1,6 +1,6 @@
 <?php
 
-error_reporting( E_ERROR | E_PARSE );
+error_reporting( 0 );
 
 /* Created by Petschko
 *
@@ -9,13 +9,15 @@ error_reporting( E_ERROR | E_PARSE );
 */
 
 
-/* @param:
+/*@param:
 * image = the image.
 * image_width = the width of the image.
 * string = the text you want to add.
 * font_size = font size, between 1 and 5.
 * y = vertical position of the text.
-* color = the color of the text 
+* color = the color of the text
+* 
+* @return void
 */
 
 function CenterImageString( $image, $image_width, $string, $font_size, $y, $color )
@@ -25,6 +27,23 @@ function CenterImageString( $image, $image_width, $string, $font_size, $y, $colo
 	$x = $center - ( ceil( $text_width / 2 ) );
 	ImageString( $image, $font_size, $x, $y, $string, $color );
 }
+
+
+/*@param:
+* image = the image.
+* font_wd = font size, between 1 and 5.
+* color = the color of the text 
+* message = the output error_message
+* 
+* @return void
+*/
+
+function error_output( $image, $font_wd, $color, $message )
+{
+	ImageString( $image, $font_wd, 2, 12, $message, $color );
+	imagepng( $image );
+}
+
 
 require( "config.php" );
 
@@ -116,7 +135,7 @@ if( ! $allow_check )
 if( @function_exists('fsockopen') )
 {
 	// Prüfen ob alle erforderlichen Angaben gemacht wurden
-	if( isset( $port ) && ( ! empty( $serveradress ) ) && strchr( $serveradress, '.' ) && isset( $timeout ) )
+	if( isset( $port ) && ( ! empty( $serveradress ) ) && ( strchr( $serveradress, '.' ) || strchr( $serveradress, ':' ) ) && isset( $timeout ) )
 	{
 		// MIN/MAX Timeout checken und ggf. korregieren!
 		if( $timeout > 10 )
@@ -124,7 +143,21 @@ if( @function_exists('fsockopen') )
 		if( $timeout < 1 )
 			$timeout = 1;
 		
-		// Prüfen ob der Server antwortet	
+		// Prüfen ob der Server antwortet
+		if( $use_ip == false )
+		{
+			$ip = @gethostbyname( $serveradress );
+			
+			if( $ip == $serveradress ) // Dedect host realy exist (work not every time)
+			{
+				error_output( $bild, $textgroesse, $rot, "Host didn't exist! ({$serveradress})" );
+				exit;
+			}
+		}
+		else
+			$ip = $serveradress;
+		
+		
 		$startzeit = microtime( );
 		
 		$data = @fsockopen( $serveradress, $port, $errno, $errstr, $timeout );
@@ -152,7 +185,7 @@ if( @function_exists('fsockopen') )
 			}
 			catch( Exception $e )
 			{
-				echo 'Exception: ',  $e->getMessage( ), "\n";
+				error_output( $bild, $textgroesse, $rot, 'Exception: ' . $e->getMessage( ) );
 				exit;
 			}
 			

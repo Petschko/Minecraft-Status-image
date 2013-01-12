@@ -1,27 +1,63 @@
 I hope you can understand what i mean here, I'am not the best who write good in english =/ (<- i think you find here more than 1 grammar/lang error^^)
 
+#####################
 ### How to config ###
+#####################
 
 open the config.php and set there your server IP/hostname (ipv6 needs [] around the IP)
 save it and youre done.
 
-### How to show this image on my Website? ###
 
-Include the image like a normal png/jpg/jpeg/gif image:
+#############################################
+### How to show this image on my Website? ###
+#############################################
+
+Include the image like a normal png/jpg/jpeg/gif image: (HTML-Code)
 <img src="minecraft_status.php" alt="Minecraftserverstate" title="My Serverstate" />
 
+-----------------------------------------------
 -------------Error area------------------------
+-----------------------------------------------
 
+###########################################
 ### Why my Server is everytime Offline? ###
+###########################################
 
-cheack your config and make sure, that you use the correct port of your minecraftserver, when you use the default port you must set it to 25565!
+check your config and make sure, that you use the correct port of your minecraftserver, when you use the default port you must set it to 25565!
 
+
+#############################################################
+### You get the text "Host din't exist! (Your IP-Adress)" ###
+#############################################################
+open your config and set $use_ip = true; also set this to true, when you use ipv6!
+
+
+############################################################
+### You get the text "Host din't exist! (Your Hostname)" ###
+############################################################
+
+You use an invalid hostname please check this out in your config or set $use_ip = true; to disable the hostcheck (not recommend)!
+
+
+###################################################
 ### You get the text "State: Unknow (See help)" ###
+###################################################
 
 You need the php fsockopen() function. Some freehosts disable this function for security reasons.
 Ask your hosting provider to get more info or, when you have your own webserver, you must set the function on in your php.ini ( see: http://php.net/manual/en/ini.php )
 
+
+####################################################
 ### You get the text "State: Check your config!" ###
+####################################################
 
 Open your config.php and set your server IP/hostname and the correct port and set the timeout time (betwen 1.0 - 10.0)
 (ipv6 needs [] around the IP)
+
+
+##########################
+### You get NONE image ###
+##########################
+
+You use an not existing hostname. Check you hostname in you config (write it without http://)
+Or you found a bug please report it! -> https://github.com/Petschko/Minecraft-Status-image/issues/new
