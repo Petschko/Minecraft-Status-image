@@ -159,6 +159,10 @@ $color_con_info = $hell_blau;
 if( $port != 25565 )
 	$text_serverconnectioninfo .= ":" . $port;
 
+// If servername is set, show it
+if($servername_display != "")
+	$text_serverconnectioninfo = $servername_display;
+
 // Ist der Text zu lang?
 if( ( ( imagefontwidth( $textgroesse ) * mb_strlen( $text_serverconnectioninfo ) ) + $x2 ) > $breite ) {
 	$text_serverconnectioninfo = "ERROR: Text to long!";
