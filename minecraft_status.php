@@ -8,6 +8,16 @@ error_reporting( 0 );
 * Autors Website: http://www.eona.in/
 */
 
+require( "config.php" );
+
+header( "Pragma: no-cache" );
+header( "Cache-Control: no-store, no-cache, max-age=0, must-revalidate" );
+header( "Content-Type: image/png" );
+mb_internal_encoding("UTF-8");
+
+if($use_get) {
+	// todo not implement yet
+}
 
 /*@param:
 * image = the image.
@@ -20,9 +30,8 @@ error_reporting( 0 );
 * @return void
 */
 
-function CenterImageString( $image, $image_width, $string, $font_size, $y, $color )
-{
-	$text_width = imagefontwidth( $font_size ) * strlen( $string );
+function CenterImageString( $image, $image_width, $string, $font_size, $y, $color ) {
+	$text_width = imagefontwidth( $font_size ) * mb_strlen( $string );
 	$center = ceil( $image_width / 2 );
 	$x = $center - ( ceil( $text_width / 2 ) );
 	ImageString( $image, $font_size, $x, $y, $string, $color );
@@ -38,18 +47,60 @@ function CenterImageString( $image, $image_width, $string, $font_size, $y, $colo
 * @return void
 */
 
-function error_output( $image, $font_wd, $color, $message )
-{
+function error_output( $image, $font_wd, $color, $message ) {
 	ImageString( $image, $font_wd, 2, 12, $message, $color );
 	imagepng( $image );
 }
 
+function get_info($data) {
+	$motd = substr($data, 0, strpos($data, chr(167)));
+	$text_after_msg = substr($data, strpos($data, chr(167)));
+	$max_player = str_replace(chr(167), "", substr($data, strrpos($data, chr(167))));
+	$online_player = str_replace(chr(167), "", substr($text_after_msg, strpos($text_after_msg, chr(167)), strrpos($text_after_msg, chr(167))));
 
-require( "config.php" );
+	return array($motd, get_number($online_player), get_number($max_player));
+}
 
-header( "Pragma: no-cache" ); 
-header( "Cache-Control: no-store, no-cache, max-age=0, must-revalidate" );
-Header( "Content-Type: image/png" );
+function get_number($str) {
+	$array = str_split($str, 1);
+	$number = "";
+	foreach($array as $char) {
+		switch($char) {
+			case "0":
+				$number .= "0";
+				break;
+			case "1":
+				$number .= "1";
+				break;
+			case "2":
+				$number .= "2";
+				break;
+			case "3":
+				$number .= "3";
+				break;
+			case "4":
+				$number .= "4";
+				break;
+			case "5":
+				$number .= "5";
+				break;
+			case "6":
+				$number .= "6";
+				break;
+			case "7":
+				$number .= "7";
+				break;
+			case "8":
+				$number .= "8";
+				break;
+			case "9":
+				$number .= "9";
+				break;
+		}
+	}
+
+	return (int) $number;
+}
 
 
 // Init image (width, height)
@@ -88,14 +139,14 @@ $text_spieleronline = "Player:";
 $uhrzeit = date( "G:i", time( "now" ) ) . " " . date( "d.m.Y", time( "now" ) );
 
 // Länge vom Text nach den 1 Texten ermitteln
-if( strlen( $text_1 ) > strlen( $text_2 ) )
-	$text_laenge = imagefontwidth( $textgroesse ) * strlen( $text_1 );
+if( mb_strlen( $text_1 ) > mb_strlen( $text_2 ) )
+	$text_laenge = imagefontwidth( $textgroesse ) * mb_strlen( $text_1 );
 else
-	$text_laenge = imagefontwidth( $textgroesse ) * strlen( $text_2 );
+	$text_laenge = imagefontwidth( $textgroesse ) * mb_strlen( $text_2 );
 	
 $x2 = $x + $text_laenge + 2;
 
-$x_zeit = $x + ( imagefontwidth( $textgroesse ) * ( strlen( $text_uhrzeit ) + 1 ) );
+$x_zeit = $x + ( imagefontwidth( $textgroesse ) * ( mb_strlen( $text_uhrzeit ) + 1 ) );
 $x_ping = 0;
 
 $color_ping = $weis;
@@ -109,8 +160,7 @@ if( $port != 25565 )
 	$text_serverconnectioninfo .= ":" . $port;
 
 // Ist der Text zu lang?
-if( ( ( imagefontwidth( $textgroesse ) * strlen( $text_serverconnectioninfo ) ) + $x2 ) > $breite )
-{
+if( ( ( imagefontwidth( $textgroesse ) * mb_strlen( $text_serverconnectioninfo ) ) + $x2 ) > $breite ) {
 	$text_serverconnectioninfo = "ERROR: Text to long!";
 	$color_con_info = $rot;
 }
@@ -125,18 +175,15 @@ $color_max_player = $hell_grau;
 // Ist die Funktion fsockopen erlaubt/vorhanden?
 // Check erlaubt?
 
-if( ! $allow_check )
-{
+if( ! $allow_check ) {
 	$status_text = "Check disabled";
 	$color_status = imagecolorallocate( $bild, 255, 144, 0 );
 	goto end_status_check;
 }
 
-if( @function_exists('fsockopen') )
-{
+if( @function_exists('fsockopen') ) {
 	// Prüfen ob alle erforderlichen Angaben gemacht wurden
-	if( isset( $port ) && ( ! empty( $serveradress ) ) && ( strchr( $serveradress, '.' ) || strchr( $serveradress, ':' ) ) && isset( $timeout ) )
-	{
+	if( isset( $port ) && ( ! empty( $serveradress ) ) && ( mb_strripos( $serveradress, '.' ) || mb_strripos( $serveradress, ':' ) ) && isset( $timeout ) ) {
 		// MIN/MAX Timeout checken und ggf. korregieren!
 		if( $timeout > 10 )
 			$timeout = 10;
@@ -144,69 +191,56 @@ if( @function_exists('fsockopen') )
 			$timeout = 1;
 		
 		// Prüfen ob der Server antwortet
-		if( $use_ip == false )
-		{
+		if( $use_ip == false ) {
 			$ip = @gethostbyname( $serveradress );
 			
-			if( $ip == $serveradress ) // Dedect host realy exist (work not every time)
-			{
+			if( $ip == $serveradress ) { // detect if host exists
 				error_output( $bild, $textgroesse, $rot, "Host didn't exist! ({$serveradress})" );
 				exit;
 			}
-		}
-		else
+		} else
 			$ip = $serveradress;
 		
-		
+		// Get serverinfo
 		$startzeit = microtime( );
-		
 		$data = @fsockopen( $serveradress, $port, $errno, $errstr, $timeout );
-		
 		$endzeit = microtime( );
 		
-		if( $data )
-		{
-			// Daten aus den Server auslesen
-			try
-			{
+		if( $data ) {
+			// Daten aus dem Server auslesen
+			try {
 				fwrite( $data, "\xFE" );
 				$temp = fread( $data, 256 );
-				
-				if( $temp[0] != "\xFF" )
-					break; // Bei Fehler abbrechen (try anweisung verlassen)
-				
-				$temp = substr( $temp, 3 );
-				$temp = mb_convert_encoding( $temp, 'auto', 'UCS-2' );
-				$temp = explode( "\xA7", $temp );
+				$temp = substr( $temp, 3 ); // do not use mb function here!
+				if($is_mod) {
+					$temp = get_info($temp);
+					$serverinfo = array('motd' => $temp[0], 'spieler' => (int) $temp[1], 'max_spieler' => (int) $temp[2]);
+				} else {
+					$temp = explode("\xA7", $temp);
+					$serverinfo = array( 'motd' => $temp[0], 'spieler' => ( int )$temp[1], 'max_spieler' => ( int )$temp[2] );
+				}
+
 				// Verbindung schließen
 				@fclose( $data );
-				
-				$serverinfo = array( 'motd' => $temp[0], 'spieler' => ( int )$temp[1], 'max_spieler' => ( int )$temp[2] );
 			}
-			catch( Exception $e )
-			{
+			catch( Exception $e ) {
 				error_output( $bild, $textgroesse, $rot, 'Exception: ' . $e->getMessage( ) );
 				exit;
 			}
 			
-			
 			// Farben setzen für die Spieleranzeige
-			if( $serverinfo['max_spieler'] != "??" )
-			{
+			if( $serverinfo['max_spieler'] != "??" ) {
 				$color_max_player = $weis;
 				$color_breakline = $weis;
 				$color_player_online = $weis;
 				
 				if( $serverinfo['spieler'] == 0 )
 					$color_player_online = $rot;
-				else if( $serverinfo['spieler'] == $serverinfo['max_spieler'] )
-				{
+				else if( $serverinfo['spieler'] == $serverinfo['max_spieler'] ) {
 					$color_player_online = $rot;
 					$color_breakline = imagecolorallocate( $bild, 255, 255, 0 );
 					$color_max_player = imagecolorallocate( $bild, 255, 255, 0 );
-				}
-				else if( $serverinfo['spieler'] > ( $serverinfo['max_spieler'] - ( $serverinfo['max_spieler'] / 5 ) ) )
-				{
+				} else if( $serverinfo['spieler'] > ( $serverinfo['max_spieler'] - ( $serverinfo['max_spieler'] / 5 ) ) ) {
 					$color_breakline = imagecolorallocate( $bild, 255, 255, 0 );
 					$color_max_player = imagecolorallocate( $bild, 255, 255, 0 );
 				}
@@ -221,7 +255,7 @@ if( @function_exists('fsockopen') )
 			$ping_int = round( $ping, 0 );
 			$ping_text = str_replace( '.', ',', round( $ping, 1 ) ) . "ms";
 			
-			$x_ping = ( $breite - 1 ) - ( imagefontwidth( $textgroesse ) * strlen( $ping_text ) );
+			$x_ping = ( $breite - 1 ) - ( imagefontwidth( $textgroesse ) * mb_strlen( $ping_text ) );
 			
 			// Mod
 			$ping_int = $ping * 2;
@@ -233,8 +267,7 @@ if( @function_exists('fsockopen') )
 			// Farbe errechnen je schlechter der Ping desto roter
 			if( $ping_int <= 255 )
 				$rot_farbe = $ping_int;
-			else if( $ping_int <= 510 )
-			{
+			else if( $ping_int <= 510 ) {
 				$rot_farbe = 255;
 				$ping_int = $ping_int - 255;
 				
@@ -242,17 +275,13 @@ if( @function_exists('fsockopen') )
 					$gruen_farbe = $gruen_farbe - $ping_int;
 				else
 					$gruen_farbe = 0;
-			}
-			else
-			{
+			} else {
 				$rot_farbe = 255;
 				$gruen_farbe = 0;
 			}
 			
 			$color_ping = imagecolorallocate( $bild, $rot_farbe, $gruen_farbe, 0 );
-		}
-		else
-		{
+		} else {
 			$status_text = "OFFLINE";
 			$color_status = $rot;
 			
@@ -260,15 +289,11 @@ if( @function_exists('fsockopen') )
 			$serverinfo['spieler'] = 0;
 			$color_player_online = $rot;
 		}
-	}
-	else
-	{
+	} else {
 		$status_text = "Check your config!";
 		$color_status = $grau;
 	}
-}
-else
-{
+} else {
 	/* Kann den Server nicht Pingen ohne die Funktion...
 	*  Wenn da Unbekannt steht, hat dein Serverhoster die fsockopen() Funktion höchstwahrscheinlich deaktiviert oder benutzt eine veraltete PHP-Version. Kontaktiere hierzu am besten deinen Webhoster
 	*  Wenn du der Besitzer des Webservers bist musst du die Funktion in der php.ini aktivieren/erlauben oder deine PHP-Version Updaten! Hilfe findest du hier: http://de2.php.net/manual/de/ini.php
@@ -280,8 +305,8 @@ else
 end_status_check:
 // Zuweisen der Serverinfo
 $text_spieler_now_online = $serverinfo['spieler'];
-$x3 = $x_zeit + ( imagefontwidth( $textgroesse ) * strlen( $text_spieler_now_online ) );
-$x4 = $x3 + ( imagefontwidth( $textgroesse ) * strlen( "/" ) );
+$x3 = $x_zeit + ( imagefontwidth( $textgroesse ) * mb_strlen( $text_spieler_now_online ) );
+$x4 = $x3 + ( imagefontwidth( $textgroesse ) * mb_strlen( "/" ) );
 $text_maxspieler = $serverinfo['max_spieler'];
 
 // Texte zusammenfassen
@@ -306,5 +331,3 @@ if( $show_who_create_script )
 
 // Bild ausgeben:
 imagepng( $bild );
-
-?>
