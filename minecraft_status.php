@@ -53,10 +53,12 @@ function error_output( $image, $font_wd, $color, $message ) {
 }
 
 function get_info($data) {
-	$motd = substr($data, 0, strpos($data, chr(167)));
-	$text_after_msg = substr($data, strpos($data, chr(167)));
-	$max_player = str_replace(chr(167), "", substr($data, strrpos($data, chr(167))));
-	$online_player = str_replace(chr(167), "", substr($text_after_msg, strpos($text_after_msg, chr(167)), strrpos($text_after_msg, chr(167))));
+	$last_split_char = strrpos($data, chr(167));
+	$max_player = substr($data, $last_split_char + 1);
+	$pre_max_player_text = substr($data, 0, $last_split_char - 1);
+	$online_player_split_char = strrpos($pre_max_player_text, chr(167));
+	$online_player = substr($pre_max_player_text, $online_player_split_char + 1);
+	$motd = substr($pre_max_player_text, 0, $online_player_split_char - 1);
 
 	return array($motd, get_number($online_player), get_number($max_player));
 }
