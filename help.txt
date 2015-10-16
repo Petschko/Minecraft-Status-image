@@ -4,21 +4,23 @@ I hope you can understand what i mean here, I'am not the best who write good in 
 ### How to config ###
 #####################
 
-1. upload the config.php and minecraft_status.php to your website (via FTP or what ever)
-2. open the config.php and set there your server IP/hostname (ipv6 needs [] around the IP)
-3. save it and you're done.
+1. Upload the Files "config.php" and "minecraft_status.php" to your website in the same Directory (via FTP or what ever)
+2. Open the "config.php" and set there your Server IP/Hostname (ipv6 needs [] around the IP)
+2.a. You can hide your real IP when setting up a Servername use $servername_display = "myname"; to change it may you can use it to hide your real IP. (For "DDoS-Protections needed") or only to show your Server-Name.
+Let $servername_display = ""; to Show your IP/Hostname
+3. Save it and you're done.
 
 
 #############################################
 ### How to show this image on my Website? ###
 #############################################
 
-Include the image like a normal png/jpg/jpeg/gif image: (HTML-Code)
+Include the image like a normal png/jpg/jpeg/gif image: (XHTML-Code)
 <img src="minecraft_status.php" alt="Minecraftserverstate" title="My Serverstate" />
-or (recommend)
-<img src="http://yoursite.net/imagepath/minecraft_status.php" alt="Minecraftserverstate" title="My Serverstate" />
+or (recommend HTML-Code)
+<img src="minecraft_status.php" alt="Minecraftserverstate" title="My Serverstate" />
 
-You can use this also in your forums signature, use the image BB-code like that:
+You can use this also in your Forums Signature, use the image BB-code like that (May some Forums have different BB-Codes):
 [img]http://yoursite.net/imagepath/minecraft_status.php[/img]
 
 
@@ -30,13 +32,14 @@ You can use this also in your forums signature, use the image BB-code like that:
 ### Why my Server is everytime Offline? ###
 ###########################################
 
-check your config and make sure, that you use the correct port of your minecraftserver, when you use the default port you must set it to 25565!
+Check your config and make sure, that you use the correct Port of your Minecraftserver, when you use the default port you must set it to 25565!
+Do you use Cloudflare or some different "DDoS-Protections"? Make sure, to use the REAL-Server-IP! You can Hide it additional with your Hostname use it as Name! Use $servername_display = "my_cloudflarehostname.de"; for example.
 
 
 ##############################################################
 ### You get the text "Host didn't exist! (Your IP-Adress)" ###
 ##############################################################
-open your config and set $use_ip = true; also set this to true, when you use ipv6!
+Open your config and set $use_ip = true; also set this to true, when you use ipv6!
 
 
 #############################################################
