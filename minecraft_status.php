@@ -5,7 +5,7 @@ error_reporting( 0 );
 /* Created by Petschko
 *
 * Autors E-Mail: peter-91@hotmail.de
-* Autors Website: http://www.eona.in/
+* Autors Website: http://petschko.eona.in/
 */
 
 require( "config.php" );
